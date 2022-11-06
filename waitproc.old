@@ -1,0 +1,25 @@
+function print_usage {
+	echo -e "\033[97mwaitproc\033[0m: Wait until the given process ends to execute a command"
+	echo -e "Usage: waitproc <pid> <command>"
+	echo -e " If the command have multiple args, provide it as a single string"
+	echo -e "Example: \033[97mwaitproc 20987 \"shutdown now\"\033[0m will execute \033[97mshutdown now\033[0m after process with pid 20987 finishes"
+}
+
+pid="$1"
+command="$2"
+
+if [ -z "$pid" ]; then
+	echo -e "\033[91mpid was not provided\033[0m"
+	print_usage
+	exit 1
+fi
+
+if [ -z "$command" ]; then
+	echo -e "\033[91mcommand was not provided\033[0m"
+	print_usage
+	exit 1
+fi
+
+echo -e "Waiting until pid \033[97m$pid\033[0m finishes to execute \033[97m$command\033[0m"
+
+tail --pid $pid -f /dev/null && `$command`
