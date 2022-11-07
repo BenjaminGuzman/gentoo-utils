@@ -84,7 +84,7 @@ func main() {
 	// print processes information
 	processes := getProcesses(pids)
 	var wg sync.WaitGroup
-	fmt.Println("Waiting until pids")
+	fmt.Printf("\033[97m%v\033[0m will run after these processes finish:\n", commandWArgs)
 	for i, proc := range processes {
 		// get the process' command line
 		cmdlineBytes, err := os.ReadFile(fmt.Sprintf("/proc/%d/cmdline", proc.Pid))
@@ -102,14 +102,13 @@ func main() {
 			cmdline := string(cmdlineBytes)
 
 			procCmdStr := fmt.Sprintf("%d -> %s", pids[i], cmdline)
-			fmt.Printf("\t%s\n", procCmdStr)
+			fmt.Printf("  - %s\n", procCmdStr)
 
 			// wait until process finishes inside goroutine with the help of tail
 			wg.Add(1)
 			go waitProc(&wg, pids[i], procCmdStr, sleepInterval)
 		}
 	}
-	fmt.Printf("finish to later run \033[97m%v\033[0m\n", commandWArgs)
 
 	wg.Wait() // wait until all processes have finished
 	
