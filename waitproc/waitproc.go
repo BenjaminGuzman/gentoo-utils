@@ -63,6 +63,19 @@ func getProcesses(pids []int) []*os.Process {
 	return processes
 }
 
+func waitProc(wg *sync.WaitGroup, pid int, procCmdStr string, sleepInterval int) {
+	defer wg.Done()
+
+	// use tail (which implements polling to check if process is still alive)
+	// because wait syscall only works for children processes
+	// FIXME: polling is not good. What happens if between the sleep call process ended and another one was spawned
+	//	  with the same pid?
+	//	  However, it's currently the best (and possibly the only) option
+	exec.Command("tail", "--pid", strconv.Itoa(pid), "-f", "/dev/null", "-s", strconv.Itoa(sleepInterval)).Run()
+	fmt.Printf("%s finished ✔\n", procCmdStr)
+}
+
+
 func main() {
 	flag.Usage = printUsage
 	var sleepInterval int
@@ -93,17 +106,7 @@ func main() {
 
 			// wait until process finishes inside goroutine with the help of tail
 			wg.Add(1)
-			go func(pid int, procCmdStr string, sleepInterval int) {
-				defer wg.Done()
-			
-				// use tail (which implements polling to check if process is still alive)
-				// because wait syscall only works for children processes
-				// FIXME: polling is not good. What happens if between the sleep call process ended and another one was spawned
-				//	  with the same pid?
-				//	  However, it's currently the best (and possibly the only) option
-				exec.Command("tail", "--pid", strconv.Itoa(pids[i]), "-f", "/dev/null", "-s", strconv.Itoa(sleepInterval)).Run()
-				fmt.Printf("%s finished!\n", procCmdStr) // TODO add emoji
-			}(pids[i], procCmdStr, sleepInterval)
+			go waitProc(&wg, pids[i], procCmdStr, sleepInterval)
 		}
 	}
 	fmt.Printf("finish to later run \033[97m%v\033[0m\n", commandWArgs)
@@ -111,7 +114,7 @@ func main() {
 	wg.Wait() // wait until all processes have finished
 	
 	// run command
-	fmt.Printf("All processes have finished. Executing \033[97m%v\033[0m now\n", commandWArgs) // TODO add emoji
+	fmt.Printf("All processes have finished ✅. Executing \033[97m%v\033[0m now\n", commandWArgs)
 	cmd := exec.Command(commandWArgs[0], commandWArgs[1:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
