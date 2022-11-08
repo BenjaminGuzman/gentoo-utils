@@ -53,6 +53,7 @@ echo -n "Creating ~/bin... "
 mkdir -p ~/bin
 echo Done
 
+# TODO: compile waitproc if binary doesn't exist
 if [[ "$symlinks" == 0 ]]; then # direct copy (don't use symlinks)
 	echo "Copying binaries:"
 	cp_cmd waitproc/waitproc waitproc
