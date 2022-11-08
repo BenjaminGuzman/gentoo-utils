@@ -1,2 +1,6 @@
 # exclude compiled binary
 /waitproc/waitproc
+
+# Exclude IDE/text editor config
+**/*.swp
+**/.idea
