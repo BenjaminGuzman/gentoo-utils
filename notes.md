@@ -40,13 +40,14 @@ Disable useless (for some workstations) services
 systemctl disable sshd
 ```
 
-Sometimes you may want to keep source files
-(e.g. when installing openjdk it's a good idea to keep sources for future reference and documentation)
+Sometimes you may want to keep (WHOLE) source files and this may come handy
 
 ```
 # show the directory storing the source tar. Copy it to /var/src or whichever location you like
 portageq distdir
 ```
+
+Or... just use the `doc` use flag. It may be better 😉
 
 To wait for a process to finish and then execute something
 (e.g. wait for compilation to finish and then shutdown)
