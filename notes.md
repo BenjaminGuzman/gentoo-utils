@@ -44,16 +44,36 @@ Sometimes you may want to keep source files
 (e.g. when installing openjdk it's a good idea to keep sources for future reference and documentation)
 
 ```
-# show the directory storing the source tar. Copy it to /var/src or whatever location you like
+# show the directory storing the source tar. Copy it to /var/src or whichever location you like
 portageq distdir
 ```
 
 To wait for a process to finish and then execute something
 (e.g. wait for compilation to finish and then shutdown)
+
 ```
 tail --pid <pid> -f /dev/null && shutdown now
 ```
+
 Or, you could also use the [**waitproc**](./waitproc) bash executable
+
+## Kernel
+
+Open menu config
+
+```
+cd /usr/src/linux
+sudo make menuconfig
+```
+
+Recompile and install kernel
+
+```
+sudo make -j 4 && sudo make modules_install && sudo make install
+```
+
+(change `-j 4` to fit your needs)
+
 
 Remember to create the symlink `var/src/linux` to point to the actual kernel version `/var/src/<actual kernel version>`.
 Otherwise some packages may have (minor?) trouble when compiling
