@@ -49,6 +49,7 @@ portageq distdir
 
 Or... just use the `doc` use flag. It may be better 😉
 
+
 To wait for a process to finish and then execute something
 (e.g. wait for compilation to finish and then shutdown)
 
@@ -57,6 +58,10 @@ tail --pid <pid> -f /dev/null && shutdown now
 ```
 
 Or, you could also use the [**waitproc**](./waitproc) bash executable
+
+## Waitproc
+
+Pro tip: if you need to run something that requires super user privileges (e.g. `sudo something`), run waitproc with super user privileges (e.g. `sudo waitproc --pid 12345 something`), this way the child process will also have such privileges
 
 ## Kernel
 
