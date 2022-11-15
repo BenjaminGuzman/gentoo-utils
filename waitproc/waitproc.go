@@ -1,13 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
-	"flag"
-	"log"
-	"strings"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -39,11 +39,11 @@ func readArgs(sleepInterval *int) ([]int, []string) {
 		}
 		pids[i] = int(pid)
 	}
-	
+
 	// read command with arguments
 	commandWArgs := flag.Args()
 	if len(commandWArgs) < 1 {
-		log.Fatal("no command was provided")
+		log.Println("no command was provided")
 		flag.Usage()
 	}
 
@@ -52,7 +52,7 @@ func readArgs(sleepInterval *int) ([]int, []string) {
 
 func getProcesses(pids []int) []*os.Process {
 	processes := make([]*os.Process, len(pids))
-	for i, pid := range(pids) {
+	for i, pid := range pids {
 		proc, err := os.FindProcess(pids[i])
 		if err != nil {
 			log.Fatalf("error while finding process %d. %w", pid, err)
@@ -71,10 +71,13 @@ func waitProc(wg *sync.WaitGroup, pid int, procCmdStr string, sleepInterval int)
 	// FIXME: polling is not good. What happens if between the sleep call process ended and another one was spawned
 	//	  with the same pid?
 	//	  However, it's currently the best (and possibly the only) option
-	exec.Command("tail", "--pid", strconv.Itoa(pid), "-f", "/dev/null", "-s", strconv.Itoa(sleepInterval)).Run()
+	exec.Command("tail",
+		"--pid", strconv.Itoa(pid),
+		"-f", "/dev/null",
+		"-s", strconv.Itoa(sleepInterval),
+	).Run()
 	fmt.Printf("%s finished ✔\n", procCmdStr)
 }
-
 
 func main() {
 	flag.Usage = printUsage
@@ -94,7 +97,7 @@ func main() {
 			// replace weird characters in cmdline
 			byte2Remove := byte('\000')
 			byteReplacement := byte(' ')
-			for i, _ := range(cmdlineBytes) {
+			for i := range cmdlineBytes {
 				if cmdlineBytes[i] == byte2Remove {
 					cmdlineBytes[i] = byteReplacement
 				}
@@ -111,11 +114,14 @@ func main() {
 	}
 
 	wg.Wait() // wait until all processes have finished
-	
+
 	// run command
 	fmt.Printf("All processes have finished ✅. Executing \033[97m%v\033[0m now\n", commandWArgs)
 	cmd := exec.Command(commandWArgs[0], commandWArgs[1:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("Error while executing %v. %s", commandWArgs, err)
+	}
 }
