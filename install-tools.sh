@@ -43,7 +43,7 @@ while getopts "lh" opt; do
 			echo [NOTE]: Using symlinks
 			symlinks=1
 			;;
-		\?)
+		\?|*)
 			echo "$option is not recognized and therefore ignored"
 			;;
 	esac
@@ -53,13 +53,21 @@ echo -n "Creating ~/bin... "
 mkdir -p ~/bin
 echo Done
 
-# TODO: compile waitproc if binary doesn't exist
+# check if waitproc binary exist and if not, compile it
+if [[ ! -x "waitproc/waitproc" ]]; then
+	echo "waitproc binary doesn't exist"
+	echo "Trying to compile it..."
+	go build -o waitproc/waitproc waitproc/waitproc.go && echo Sucessfully built waitproc binary && cd ..
+fi
+
 if [[ "$symlinks" == 0 ]]; then # direct copy (don't use symlinks)
 	echo "Copying binaries:"
 	cp_cmd waitproc/waitproc waitproc
 	cp_cmd upgrade.sh upgrade
+	cp_cmd maintenance.sh maint
 else
 	echo "Creating symlinks for:"
 	symlink_cmd waitproc/waitproc waitproc
 	symlink_cmd upgrade.sh upgrade
+	symlink_cmd maintenance.sh maint
 fi
