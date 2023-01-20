@@ -83,3 +83,13 @@ sudo make -j 4 && sudo make modules_install && sudo make install
 
 Remember to create the symlink `var/src/linux` to point to the actual kernel version `/var/src/<actual kernel version>`.
 Otherwise some packages may have (minor?) trouble when compiling
+
+## Bluetooth
+
+In my installation sometimes bluetooth daemon crashes for some unknown reason 
+(journal says 'Read Report Reference descriptor failed: Request attribute has encountered an unlikely error').
+So, my solution to make it work again is to unload the bluetooth usb kernel module and load it again:
+
+```bash
+sudo modprobe --remove btusb && sudo modprobe btusb
+```
