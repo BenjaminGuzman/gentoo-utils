@@ -18,7 +18,7 @@ function update {
 	sudo emaint --allrepos sync | tee "$tmpfile"
 
 	update_portage=$(more "$tmpfile" | grep --ignore-case "An update to portage is available" --count)
-	if [[ "$update_portage" -gt "0" ]]; then # should actually update portage
+	if [[ "$update_portage" -gt "0" ]]; then # should update portage first
 		# extract the suggested command to run
 		update_portage_cmd=$(awk $'match($0, /To update portage, run \'(.*\)\'/, a) {print a[1]}' "$tmpfile")
 		update_portage_cmd="sudo $update_portage_cmd"
@@ -29,7 +29,8 @@ function update {
 
 	# download updated packages and compile
 	echo Downloading and compiling packages...
-	sudo emerge --ask --verbose --update --deep --changed-use @world
+	echo " (a copy of this command logs will be stored in $tmpfile)"
+	sudo emerge --ask --verbose --update --deep --changed-use @world | tee "$tmpfile"
 
 	echo Remember you can exclude packages from update with --exclude option
 	echo Example:
@@ -73,6 +74,9 @@ for arg in "$@"; do
 		clean)
 			echo -e "\033[94m*** Cleaning the system ***\033[0m"
 			clean
+			;;
+		-h)
+			help
 			;;
 		*)
 			echo "Argument $arg was not recognized"

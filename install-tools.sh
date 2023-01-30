@@ -1,73 +1,113 @@
 #!/bin/bash
 
+# default configuration values
+INSTALLATION_DIR="$HOME/bin"
+SOFT_LINKS=0
+
+# colors
+WHITE_BRIGHT="\033[97m"
+WHITE_BOLD="\033[97;1m"
+BLUE_BOLD="\033[94;1m"
+CYAN_UNDERLINE="\033[96;4m"
+YELLOW="\033[33m"
+RED="\033[91m"
+GREEN="\033[92m"
+RESET="\033[0m"
+BOLD="\033[1m"
+
 function help {
-	echo "Install helper tools to ~/bin and modify your PATH variable"
+	echo "Install helper tools to the installation directory and modify your PATH variable"
 	echo
-	echo "Syntax: $0 [-l|-h]"
-	echo "Options:"
-	echo " -l:	Use symlinks instead of directly copying the binaries to ~/bin"
-	echo " -h:	Print this message and exit"
+	echo -en "$WHITE_BOLD"
+	echo -e "Usage:$RESET $BLUE_BOLD$0$RESET [$YELLOW-l$RESET|$YELLOW-h$RESET]$CYAN_UNDERLINE [<installation dir>]$RESET"
+	echo -en "$WHITE_BOLD"
+	echo -e "Options:$RESET"
+	echo -e "  $YELLOW-s$RESET:     Use soft links (symlinks) instead of hard links"
+	echo -e "  $YELLOW-h$RESET:     Print this message and exit"
+	echo
+	echo -e "Default installation dir: $WHITE_BRIGHT$INSTALLATION_DIR$RESET"
 }
 
-function cp_cmd {
-	cmd_name="$1"
-	new_cmd_name="$2"
-	out_path="$HOME/bin/$new_cmd_name"
-
-	echo -e -n "\t$cmd_name... "
-	cp "$cmd_name" "$out_path"
-	chmod 0744 "$out_path"
-	echo Done.
-}
-
-function symlink_cmd {
+function link_cmd {
 	cmd_name="$1"
 	link_name="$2"
-	cwd=`pwd`
+	cwd=$(pwd)
+
+	ln_exit_code=0
 
 	echo -e -n "\t$link_name... "
-	cd ~/bin
-	ln -s "$cwd/$cmd_name" "$link_name"
-	cd "$cwd"
-	echo Done.
+	if [[ "$SOFT_LINKS" -eq "1" ]]; then
+		ln -s "$cwd/$cmd_name" "$INSTALLATION_DIR/$link_name"
+		ln_exit_code="$?"
+	else
+		ln "$cwd/$cmd_name" "$INSTALLATION_DIR/$link_name"
+		ln_exit_code="$?"
+	fi
+
+	print_status "$ln_exit_code"
 }
 
-symlinks=0
-while getopts "lh" opt; do
+function print_status {
+	status_code="$1"
+
+	if [[ "$status_code" -eq "0" ]]; then
+		echo -en "$GREEN"
+		echo Success.
+		echo -en "$RESET"
+	else
+		echo -en "$RED"
+		echo Failed.
+		echo -en "$RESET"
+	fi
+}
+
+while getopts "sh" opt; do
 	case $opt in
 		h)
 			help
 			exit 0
 			;;
-		l)
-			echo [NOTE]: Using symlinks
-			symlinks=1
+		s)
+			SOFT_LINKS=1
 			;;
-		\?|*)
-			echo "$option is not recognized and therefore ignored"
+		\?|\*)
+			echo "$opt is not recognized and therefore ignored"
 			;;
 	esac
 done
 
-echo -n "Creating ~/bin... "
-mkdir -p ~/bin
-echo Done
+if [[ "$SOFT_LINKS" -eq "1" ]]; then
+	echo -en "$YELLOW"
+	echo -e "[NOTE]: Using$BOLD soft$RESET$YELLOW links$RESET"
+else
+	echo -en "$YELLOW"
+	echo -e "[NOTE]: Using$BOLD hard$RESET$YELLOW links$RESET"
+fi
+
+if [[ -n "$1" && "$1" != "-s" ]]; then # -s option is not given or is given as 2nd argument
+	INSTALLATION_DIR="$1"
+elif [[ "$1" == "-s" && -n "$2" ]]; then # -s option is the first argument, 2nd arg is the installation dir
+	INSTALLATION_DIR="$2"
+fi
+
+echo -en "Ensuring directory $WHITE_BRIGHT$INSTALLATION_DIR$RESET exists... "
+mkdir -p "$INSTALLATION_DIR" || exit 1
+print_status "$?"
 
 # check if waitproc binary exist and if not, compile it
 if [[ ! -x "waitproc/waitproc" ]]; then
+	echo -en "$YELLOW"
 	echo "waitproc binary doesn't exist"
+	echo -en "$RESET"
 	echo "Trying to compile it..."
 	go build -o waitproc/waitproc waitproc/waitproc.go && echo Sucessfully built waitproc binary && cd ..
 fi
 
-if [[ "$symlinks" == 0 ]]; then # direct copy (don't use symlinks)
-	echo "Copying binaries:"
-	cp_cmd waitproc/waitproc waitproc
-	cp_cmd upgrade.sh upgrade
-	cp_cmd maintenance.sh maint
-else
+if [[ "$SOFT_LINKS" -eq "1" ]]; then
 	echo "Creating symlinks for:"
-	symlink_cmd waitproc/waitproc waitproc
-	symlink_cmd upgrade.sh upgrade
-	symlink_cmd maintenance.sh maint
+else
+	echo "Creating hard links for:"
 fi
+
+link_cmd waitproc/waitproc waitproc
+link_cmd maintenance.sh maint
