@@ -8,7 +8,7 @@ Compilation of notes and scripts I use for my Gentoo installation
 
 - [maint](./maintenance.sh): Update and clean your Gentoo system
 
-- [install-tools.sh](./install-tools.sh): Install the above tools inside ~/bin and update your PATH
+- [install-tools.sh](./install-tools.sh): Install the above tools
 
 
 # Notes

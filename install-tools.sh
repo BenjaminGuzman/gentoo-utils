@@ -16,7 +16,7 @@ RESET="\033[0m"
 BOLD="\033[1m"
 
 function help {
-	echo "Install helper tools to the installation directory and modify your PATH variable"
+	echo "Install helper tools to the installation directory"
 	echo
 	echo -en "$WHITE_BOLD"
 	echo -e "Usage:$RESET $BLUE_BOLD$0$RESET [$YELLOW-l$RESET|$YELLOW-h$RESET]$CYAN_UNDERLINE [<installation dir>]$RESET"
