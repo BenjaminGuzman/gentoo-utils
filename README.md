@@ -27,7 +27,7 @@ Fresh installation useful commands
 
 ```shell
 # install useful tools
-emerge --ask app-editors/neovim sys-process/htop
+emerge --ask app-editors/vim sys-process/htop
 
 # install programming languages and tools
 emerge --ask dev-lang/{go,nasm,python,R} dev-java/openjdk dev-util/{valgrind} dev-vcs/{git} dev-java/maven-bin net-libs/nodejs
@@ -117,3 +117,7 @@ So, my solution to make it work again is to unload the bluetooth usb kernel modu
 ```bash
 sudo modprobe --remove btusb && sudo modprobe btusb
 ```
+
+## Configurations
+
+I've included some configurations I like in the `config` directory
