@@ -19,7 +19,7 @@ function help {
 	echo "Install helper tools to the installation directory"
 	echo
 	echo -en "$WHITE_BOLD"
-	echo -e "Usage:$RESET $BLUE_BOLD$0$RESET [$YELLOW-l$RESET|$YELLOW-h$RESET]$CYAN_UNDERLINE [<installation dir>]$RESET"
+	echo -e "Usage:$RESET $BLUE_BOLD$0$RESET [$YELLOW-s$RESET|$YELLOW-h$RESET] $CYAN_UNDERLINE[<installation dir>]$RESET"
 	echo -en "$WHITE_BOLD"
 	echo -e "Options:$RESET"
 	echo -e "  $YELLOW-s$RESET:     Use soft links (symlinks) instead of hard links"
@@ -35,7 +35,7 @@ function link_cmd {
 
 	ln_exit_code=0
 
-	echo -e -n "\t$link_name... "
+	echo -e -n "\t$link_name -> $cwd/$cmd_name... "
 	if [[ "$SOFT_LINKS" -eq "1" ]]; then
 		ln -s "$cwd/$cmd_name" "$INSTALLATION_DIR/$link_name"
 		ln_exit_code="$?"
