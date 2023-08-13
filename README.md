@@ -108,6 +108,12 @@ Remember to create the symlink `var/src/linux` by using `eselect kernel list` to
 (You could also create the symlink yourself with `ln -s /var/src/linux/<version> /var/src/linux`).
 Otherwise, some packages may have (minor?) trouble when compiling
 
+### Useful links
+
+- https://linux-hardware.org/ Helpful to find which kernel configs may work well with your hardware.
+
+- https://www.kernelconfig.io/index.html Helpful to understand each kernel config
+
 ## Bluetooth
 
 In my installation sometimes bluetooth daemon crashes for some unknown reason
