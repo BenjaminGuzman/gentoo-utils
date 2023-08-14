@@ -19,7 +19,7 @@ function help {
 	echo "Install helper tools to the installation directory"
 	echo
 	echo -en "$WHITE_BOLD"
-	echo -e "Usage:$RESET $BLUE_BOLD$0$RESET [$YELLOW-s$RESET|$YELLOW-h$RESET] $CYAN_UNDERLINE[<installation dir>]$RESET"
+	echo -e "Usage:$RESET $BLUE_BOLD$0$RESET [$YELLOW-s$RESET|$YELLOW-h$RESET] [$CYAN_UNDERLINE<installation dir>$RESET]"
 	echo -en "$WHITE_BOLD"
 	echo -e "Options:$RESET"
 	echo -e "  $YELLOW-s$RESET:     Use soft links (symlinks) instead of hard links"

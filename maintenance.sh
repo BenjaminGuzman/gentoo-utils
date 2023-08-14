@@ -1,13 +1,32 @@
+# colors
+WHITE_BRIGHT="\033[97m"
+WHITE_BOLD="\033[97;1m"
+BLUE_BOLD="\033[94;1m"
+CYAN_UNDERLINE="\033[96;4m"
+YELLOW="\033[33m"
+RED="\033[91m"
+GREEN="\033[92m"
+RESET="\033[0m"
+BOLD="\033[1m"
+
+function print_update_cmd_help {
+	echo -e "Remember you can exclude packages from update with $WHITE_BOLD--exclude$RESET flag"
+	echo Example:
+	echo -e "$WHITE_BOLD sudo emerge --ask --verbose --update --deep --changed-use @world --exclude=\"www-client/firefox www-client/chromium\"$RESET"
+}
+
 function help {
-	echo -e "\033[37;1mCompilation of maintenance commands for Gentoo systems\033[0m"
+	echo -e "$WHITE_BRIGHT Compilation of maintenance commands for Gentoo systems$RESET"
 	echo
-	echo -e "\033[37;1mUsage:\033[0m \033[34;1m$0\033[0m \033[32;1m<action>\033[0m [\033[32;1m<action>\033[0m...]"
+	echo -e "$WHITE_BRIGHT Usage:$RESET $BLUE_BOLD$0$RESET $YELLOW<action>$YELLOW [$YELLOW<action>$YELLOW...]"
 	echo
-	echo -e "\033[37;1mActions:\033[0m"
-	echo -e "\033[32;1mupdate\033[0m     Sync packages and update the system"
-	echo -e "\033[32;1mclean\033[0m      Clean journal logs and portage distfiles and packages"
+	echo -e "$WHITE_BOLD Actions:$RESET"
+	echo -e "  $YELLOW update$RESET     Sync packages and update the system"
+	echo -e "  $YELLOW clean$RESET      Clean journal logs and portage distfiles and packages"
 	echo
 	echo "Executed commands will be interactive (will ask for confirmation)"
+	echo
+	print_update_cmd_help
 }
 
 function update {
@@ -15,12 +34,13 @@ function update {
 
 	# Update package metadata (version available, dependencies...)
 	echo Syncing packages...
+	echo " (a copy of this command logs will be stored in $WHITE_BOLD$tmpfile$RESET)"
 	sudo emaint --allrepos sync | tee "$tmpfile"
 
 	update_portage=$(more "$tmpfile" | grep --ignore-case "An update to portage is available" --count)
 	if [[ "$update_portage" -gt "0" ]]; then # should update portage first
 		# extract the suggested command to run
-		update_portage_cmd=$(awk $'match($0, /To update portage, run \'(.*\)\'/, a) {print a[1]}' "$tmpfile")
+		update_portage_cmd=$(awk "match(\$0, /To update portage, run '(.*)'/, a) {print a[1]}" "$tmpfile")
 		update_portage_cmd="sudo $update_portage_cmd"
 
 		echo "Updating portage with '$update_portage_cmd'..."
@@ -29,12 +49,10 @@ function update {
 
 	# download updated packages and compile
 	echo Downloading and compiling packages...
-	echo " (a copy of this command logs will be stored in $tmpfile)"
+	echo " (a copy of this command logs will be stored in $WHITE_BOLD$tmpfile$RESET)"
 	sudo emerge --ask --verbose --update --deep --changed-use @world | tee "$tmpfile"
 
-	echo Remember you can exclude packages from update with --exclude option
-	echo Example:
-	echo -e "\033[37;1msudo emerge --ask --verbose --update --deep --changed-use @world --exclude=\"www-client/firefox www-client/chromium\"\033[0m"
+	print_update_cmd_help
 }
 
 function clean {
