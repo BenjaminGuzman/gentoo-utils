@@ -34,13 +34,14 @@ function update {
 
 	# Update package metadata (version available, dependencies...)
 	echo Syncing packages...
-	echo " (a copy of this command logs will be stored in $WHITE_BOLD$tmpfile$RESET)"
+	echo -e " (a copy of this command logs will be stored in $WHITE_BOLD$tmpfile$RESET)"
 	sudo emaint --allrepos sync | tee "$tmpfile"
 
 	update_portage=$(more "$tmpfile" | grep --ignore-case "An update to portage is available" --count)
 	if [[ "$update_portage" -gt "0" ]]; then # should update portage first
 		# extract the suggested command to run
-		update_portage_cmd=$(awk "match(\$0, /To update portage, run '(.*)'/, a) {print a[1]}" "$tmpfile")
+		awk_extract_portage_cmd="match(\$0, /To update portage,? run '(.*)'/, a) {print a[1]}"
+		update_portage_cmd=$(awk "$awk_extract_portage_cmd" "$tmpfile")
 		update_portage_cmd="sudo $update_portage_cmd"
 
 		echo "Updating portage with '$update_portage_cmd'..."
@@ -49,7 +50,7 @@ function update {
 
 	# download updated packages and compile
 	echo Downloading and compiling packages...
-	echo " (a copy of this command logs will be stored in $WHITE_BOLD$tmpfile$RESET)"
+	echo -e " (a copy of this command logs will be stored in $WHITE_BOLD$tmpfile$RESET)"
 	sudo emerge --ask --verbose --update --deep --changed-use @world | tee "$tmpfile"
 
 	print_update_cmd_help
