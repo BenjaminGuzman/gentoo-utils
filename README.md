@@ -127,3 +127,29 @@ sudo modprobe --remove btusb && sudo modprobe btusb
 ## Configurations
 
 I've included some configurations I like in the `config` directory
+
+## Jetbrains products
+
+If your system doesn't support flatpak (which is needed to install [Jetbrains Toolbox](https://www.jetbrains.com/toolbox-app/)),
+then you may need to find some workarounds to how to install and use Jetbrains products.
+This is the approach I took to do so:
+
+1. Download the tool(s) as `.tar.gz` and decompress under the directory you like (e.g. `~/JetBrains`)
+
+2. Create soft symbolic links to the shell script (e.g., `bin/goland.sh` for GoLand) and place these under your bin directory (`~/bin`). Example: `ln -s ~/JetBrains/GoLand/bin/goland.sh ~/bin/goland`
+
+3. Add aliases to your shell, like this:
+
+```sh
+// runs the given command in the background and redirects stdout & stderr to /dev/null 
+function run_muted_in_background() {
+  cmd="$1"
+  bash -c "$cmd > /dev/null 2>&1 &"
+}
+
+alias goland="run_muted_in_background goland"
+alias clion="run_muted_in_background clion"
+alias idea="run_muted_in_background idea"
+```
+
+In theory, after you've completed step 2, you can start the tool from a shell but it will be blocked and will show you all the logs, thus making that shell session "unusable". To avoid so, follow step 3.
