@@ -141,7 +141,7 @@ This is the approach I took to do so:
 3. Add aliases to your shell, like this:
 
 ```sh
-// runs the given command in the background and redirects stdout & stderr to /dev/null 
+# runs the given command in the background and redirects stdout & stderr to /dev/null 
 function run_muted_in_background() {
   cmd="$1"
   bash -c "$cmd > /dev/null 2>&1 &"
