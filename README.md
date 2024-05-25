@@ -124,6 +124,9 @@ So, my solution to make it work again is to unload the bluetooth usb kernel modu
 sudo modprobe --remove btusb && sudo modprobe btusb
 ```
 
+It may also happen that bluetooth suddenly stops working after reboot (or boot).
+For such cases try to cold boot your machine (i.e., shut it down and then boot it up, but do not restart)
+
 ## Configurations
 
 I've included some configurations I like in the `config` directory
