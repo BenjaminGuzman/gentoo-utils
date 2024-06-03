@@ -70,7 +70,7 @@ Sometimes you may want to keep (WHOLE) source files and this may come handy
 portageq distdir
 ```
 
-Or... just use the `doc` use flag. It may be better 😉
+Or... just use the `source` use flag. It may be better 😉
 
 
 To wait for a process to finish and then execute something
