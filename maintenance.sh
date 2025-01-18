@@ -34,13 +34,21 @@ function update {
 
 	# Update package metadata (version available, dependencies...)
 	echo Syncing packages...
+<<<<<<< Updated upstream
 	echo -e " (a copy of this command logs will be stored in $WHITE_BOLD$tmpfile$RESET)"
+=======
+	echo " (a copy of this command logs will be stored in $tmpfile)"
+>>>>>>> Stashed changes
 	sudo emaint --allrepos sync | tee "$tmpfile"
 
 	update_portage=$(more "$tmpfile" | grep --ignore-case "An update to portage is available" --count)
 	if [[ "$update_portage" -gt "0" ]]; then # should update portage first
 		# extract the suggested command to run
+<<<<<<< Updated upstream
 		awk_extract_portage_cmd="match(\$0, /To update portage,? run '(.*)'/, a) {print a[1]}"
+=======
+		awk_extract_portage_cmd="match(\$0, /To update portage, run '(.*)'/, a) {print a[1]}"
+>>>>>>> Stashed changes
 		update_portage_cmd=$(awk "$awk_extract_portage_cmd" "$tmpfile")
 		update_portage_cmd="sudo $update_portage_cmd"
 
