@@ -82,6 +82,12 @@ tail --pid <pid> -f /dev/null && shutdown now
 
 Or, you could also use the [**waitproc**](./waitproc) bash executable
 
+**Docker installation**
+
+```shell
+emerge --ask app-containers/{docker,docker-cli,docker-compose}
+```
+
 ## Waitproc
 
 Pro tip: if you need to run something that requires super user privileges (e.g. `sudo something`), run waitproc with super user privileges (e.g. `sudo waitproc --pid 12345 something`), this way the child process will also have such privileges
