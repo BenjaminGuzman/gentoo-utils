@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 # colors
 WHITE_BRIGHT="\033[97m"
 WHITE_BOLD="\033[97;1m"
@@ -13,6 +15,12 @@ function print_update_cmd_help {
 	echo -e "Remember you can exclude packages from update with $WHITE_BOLD--exclude$RESET flag"
 	echo Example:
 	echo -e "$WHITE_BOLD sudo emerge --ask --verbose --update --deep --changed-use @world --exclude=\"www-client/firefox www-client/chromium\"$RESET"
+	echo
+	echo Also remember you can configure the builds to use all computing power.
+	echo If most of the packages are small, you can build packages concurrently,
+	echo i.e., while you have package A compiling, you can have package B being downloaded.
+	echo Example:
+	echo -e "$WHITE_BOLD sudo MAKEOPTS=\"-j$(( $(nproc) / 2 ))\" emerge --ask --jobs=2 --load-average=$(nproc) --verbose --update --deep --changed-use @world $RESET"
 }
 
 function help {
