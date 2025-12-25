@@ -84,6 +84,8 @@ function clean {
 
 	echo Cleaning packages...
 	sudo eclean --interactive packages
+
+	echo -e "$WHITE_BOLD Tip$RESET: Remove user cache (rm -rf ~/.cache) and clean kernel (eclean-kernel)"
 }
 
 if [[ "$#" -lt "1" ]]; then
