@@ -114,6 +114,10 @@ Remember to create the symlink `var/src/linux` by using `eselect kernel list` to
 (You could also create the symlink yourself with `ln -s /var/src/linux/<version> /var/src/linux`).
 Otherwise, some packages may have (minor?) trouble when compiling
 
+This repo contains the [T480.bluetooth-eth-netfilter-acpi.config](./T480.bluetooth-eth-netfilter-acpi.config) config
+for the ThinkPad T480. It contains the modules needed for the kernel to have most of the things you'd need for desktop/laptop
+day-to-day usage (e.g., bluetooth, ethernet, firewall, FIDO2/WebAuth, etc...)
+
 ### Useful links
 
 - https://linux-hardware.org/ Helpful to find which kernel configs may work well with your hardware.
