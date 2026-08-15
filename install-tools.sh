@@ -100,7 +100,7 @@ if [[ ! -x "waitproc/waitproc" ]]; then
 	echo "waitproc binary doesn't exist"
 	echo -en "$RESET"
 	echo "Trying to compile it..."
-	go build -o waitproc/waitproc waitproc/waitproc.go && echo Sucessfully built waitproc binary && cd ..
+	go build -o waitproc/waitproc waitproc/waitproc.go && echo Sucessfully built waitproc binary
 fi
 
 if [[ "$SOFT_LINKS" -eq "1" ]]; then
